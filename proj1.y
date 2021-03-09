@@ -28,6 +28,15 @@
 	int error = 0;
 	struct symbtab *first,*last,*temp;
 	char* op;
+	
+	struct Trie {
+	  struct Trie* children[26];
+
+	  short isLeaf;
+	};
+
+	typedef struct Trie TrieNode;
+
 %}
 
 %token DIGITS ID PLUS MINUS MUL DIVIDE NUM STRING INTEGER SPECIAL NL SPACE KEYWORD SPECIAL_START SPECIAL_END IF ELSE WHILE SEP END OR AND NOT IN NOTIN T F COLON SQUAREBRACKET_START SQUAREBRACKET_END MOD EQUAL PLUSEQUAL PRINT COMMENT RANGE SINGLEQUOTE DOUBLEQUOTE EXPONENTIAL COMMA INDENT LIST DIVIDEEQUAL MINUSEQUAL MULEQUAL LESSTHAN LESSTHANEQUAL GREATERTHAN GREATERTHANEQUAL DOUBLEEQUAL NOTEQUAL
@@ -277,11 +286,94 @@
    
   
 %%
+TrieNode* get_node() {
+  TrieNode* t = (TrieNode*)malloc(sizeof(TrieNode));
+  if (t) {
+    t->isLeaf = 0;
+    for (int i = 0; i < 26; ++i) t->children[i] = NULL;
+  }
+  return t;
+}
+
+int trie_insert(TrieNode* trie, const char* s) {
+  if (s == NULL) return 0;
+  int n = strlen(s);
+  TrieNode* t = trie;
+  // printf("%s\n", s);
+  for (int i = 0; i < n; ++i, ++s) {
+    if (t->children[*s - 'a'] == NULL) {
+      t->children[*s - 'a'] = get_node();
+      // printf("%c ", (char)*s);
+    }
+    t = t->children[*s - 'a'];
+  }
+  t->isLeaf = 1;
+  return 1;
+}
+//
+int isLeafNode(TrieNode* root) { return root->isLeaf != 0; }
+void trie_display_possib(TrieNode* t, int* fill, char* buff, int b_ix) {
+  // printf("%d", b_ix);
+  // if (*fill == 0)
+  // return;
+  // if (t != NULL && t->val == 0) {
+  // for (int i = 0; i < b_ix; ++i) printf("%c", buff[i]);
+  // puts(buff);
+  // printf("Entered %d", *fill);
+  // *fill -= 1;
+  // return;
+  // }
+  if (isLeafNode(t)) {
+    buff[b_ix] = '\0';
+    if (*fill == 0) return;
+    *fill -= 1;
+    puts(buff);
+  }
+  for (int i = 0; i < 26; ++i) {
+    if (t != NULL && t->children[i] != NULL) {
+      buff[b_ix] = (char)('a' + i);
+      trie_display_possib(t->children[i], fill, buff, b_ix + 1);
+      // printf("Completed");
+    }
+  }
+}
+
+void trie_report(TrieNode* trie, const char* s) {
+  TrieNode* t = trie;
+  int b_ix = 0;
+  char buff[100] = {'\0'};
+  while (*s != '\0' && t->children[*s - 'a'] != NULL) {
+    t = t->children[*s - 'a'];
+    // printf("Here ");
+    buff[b_ix] = *s;
+    b_ix += 1;
+    ++s;
+  }
+  // puts(buff);
+  int fill = 5;
+  int possibilities = fill;
+  trie_display_possib(t, &possibilities, buff, b_ix);
+  
+}
+
 
 int yyerror(){
         printf("\n------------------SYNTAX ERROR : at line number %d -------------------------\n",lineno);
     	error = 1;
 	v=0;
+	printf("\nYou entered %s\nDid you mean?: ",yylval);
+	 char arr[][10] = {"while", "if",   "else"};
+	  TrieNode* trie = (TrieNode*)malloc(sizeof(TrieNode));
+	  int n = sizeof(arr) / sizeof(arr[0]);
+	  for (int i = 0; i < n; ++i) {
+	     if (!trie_insert(trie, arr[i])) {
+	     printf("FAILED!!");
+	     return -1;}
+	    trie_insert(trie, arr[i]);
+	}
+
+  	trie_report(trie, yylval);
+	
         return 0;
 }
  void insert(char* l,char* t,int v,char* s,int ln)

@@ -9,7 +9,7 @@ myarr = [1,2,3]
 if(a>=b):
 	a=a+b
 	g=e*f*100
-else:
+elif:
 	f=10
 
 while(a<b):
