@@ -335,20 +335,7 @@ int yyerror(){
         }
 }
 
-void display()
-{
-        int i;
-        struct symbtab *p;
-        p=first;
-        printf("\n------------------SYMBOL TABLE before Optimisations----------------\n");
-        printf("-------------------------------------------------------------------\n");
-        printf("LABEL\tTYPE\t\tVALUE\tSCOPE\tLINENO\n");
-        for(i=0;i<size;i++)
-        {
-                printf("%s\t%s\t%d\t%s\t%d\n",p->label,p->type,p->value,p->scope,p->lineno);
-                p=p->next;
-        }
-}
+
 struct symbtab* search(char lab[])
 {
         int i=0;
@@ -491,7 +478,6 @@ int main(){
 	 
 	 if(!error)
 	 {
-	 	//display();	//symbol table display
 	 	printf("\n------------Abstract Syntax Tree--------------\n");
     		printTree(dollardollar);
     		printf("\n");
