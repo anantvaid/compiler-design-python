@@ -194,6 +194,7 @@
                 					else{
                 						printf("\n------------------ERROR : %s Undeclared at line number %d--------------------\n",$1,lineno);
     								error = 1;
+    								v=0;
                 					}	
                 					
                 				}
@@ -286,6 +287,10 @@
    
   
 %%
+
+// Trie variable
+TrieNode* trie=NULL;
+
 TrieNode* get_node() {
   TrieNode* t = (TrieNode*)malloc(sizeof(TrieNode));
   if (t) {
@@ -349,6 +354,8 @@ void trie_report(TrieNode* trie, const char* s) {
     b_ix += 1;
     ++s;
   }
+  if(b_ix==0)
+    {puts("?? Not related to reserved words.. No suggestions");return;}
   // puts(buff);
   int fill = 5;
   int possibilities = fill;
@@ -356,23 +363,30 @@ void trie_report(TrieNode* trie, const char* s) {
   
 }
 
+void build_trie()
+{
+    trie = (TrieNode*)malloc(sizeof(TrieNode));
+	 char arr[][10] = {"while", "if",   "else","print"};
+	  int n = sizeof(arr) / sizeof(arr[0]);
+	  for (int i = 0; i < n; ++i) {
+	     if (!trie_insert(trie, arr[i])) {
+	     printf("FAILED!!");
+	     return -1;}
+	}
+
+}
+
+
 
 int yyerror(){
         printf("\n------------------SYNTAX ERROR : at line number %d -------------------------\n",lineno);
     	error = 1;
 	v=0;
 	printf("\nYou entered %s\nDid you mean?: ",yylval);
-	 char arr[][10] = {"while", "if",   "else"};
-	  TrieNode* trie = (TrieNode*)malloc(sizeof(TrieNode));
-	  int n = sizeof(arr) / sizeof(arr[0]);
-	  for (int i = 0; i < n; ++i) {
-	     if (!trie_insert(trie, arr[i])) {
-	     printf("FAILED!!");
-	     return -1;}
-	    trie_insert(trie, arr[i]);
-	}
-
+	if(!trie)
+	    build_trie();
   	trie_report(trie, yylval);
+	  
 	
         return 0;
 }
