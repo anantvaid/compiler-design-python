@@ -785,7 +785,7 @@ int main(){
 	 	displayquad();
     		//printTree(dollardollar);
     		printf("\n");
-	 	printf("\n-------------ICG with optimisations(Packing temporaries & Constant Propagation)-------------\n");
+	 	printf("\n-------------ICG with optimisations(Constant Folding & Constant Propagation)-------------\n");
 		printf("%s\n",ICG);
 		FILE *f;  
 		char buff[10000];  
