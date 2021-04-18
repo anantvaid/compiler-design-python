@@ -154,11 +154,11 @@ if __name__ == "__main__" :
 		list_of_lines.append(line)
 	f.close()
 
-	print("\n -----------------------------------------")
-	printicg(list_of_lines, "ICG")
-	without_deadcode = remove_dead_code(list_of_lines)
-	printicg(without_deadcode, "Optimized ICG after removing dead code")
-	print("Eliminated", len(list_of_lines)-len(without_deadcode), "lines of code")
+	#print("\n -----------------------------------------")
+	#printicg(list_of_lines, "ICG")
+	without_deadcode = list_of_lines
+	#printicg(without_deadcode, "Optimized ICG after removing dead code")
+	#print("Eliminated", len(list_of_lines)-len(without_deadcode), "lines of code")
 
 	print("\n -----------------------------------------")
 	printicg(without_deadcode, "ICG")
